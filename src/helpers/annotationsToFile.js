@@ -1,7 +1,13 @@
 import * as path from 'path'
+import {makeFlowComment} from './annotationsToPartComponent'
 
-export default function annotationsToFile(j, fileName, annotations) {
-    const importFileName = fileName.replace(/(\.\w+?)$/, '.flow')
+export default function annotationsToFile(j, filePath, annotations, flowmode) {
+    const dir = path.dirname(filePath)
+    const importFileName = path.basename(filePath).replace(/(\.\w+?)$/, '.flow$1')
+    const importFilePath = path.format({
+        dir,
+        base: importFileName
+    })
     const importNode = j.importDeclaration(
         annotations.reduce((acc, {defaultPropsName, propTypesName}) => ([
             ...acc,
@@ -12,17 +18,20 @@ export default function annotationsToFile(j, fileName, annotations) {
             )
         ]),
         []),
-        path.join('.', importFileName)
+        j.literal(path.format({dir: '.', base: importFileName}))
     )
-    importNode.importKind = 'type'    
-    const body = annotations.map(({propsAlias, defaultAlias}) => j.exportNamedDeclaration(propsAlias),
-        ...(defaultAlias ?
-            [j.exportNamedDeclaration(defaultAlias)] :
-            [])
-    )    
+    importNode.importKind = 'type'
+    const body = annotations.reduce((acc, {propsAlias, defaultAlias}) => ([
+        ...acc,
+        j.exportNamedDeclaration(propsAlias),
+        ...(defaultAlias ? [j.exportNamedDeclaration(defaultAlias)] : [])
+    ]), [])
+    const program = j.program(body)
+    program.comments = [makeFlowComment(j, flowmode)]
+
     return {
-        programNode: j.program(body),
+        programNode: j(program),
         importNode,
-        fileName: importFileName
+        path: importFilePath
     }
 }

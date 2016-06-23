@@ -1,38 +1,48 @@
+import {findStaticByName, findDynamicByName} from './findPropTypesWithDefaults'
+import {makeFlowComment} from './annotationsToPartComponent'
+function getProgramFile(file) {
+    return file.paths()[0].value.program
+}
+
+function setAfterLastImport(j, file, ...nodes) {
+    const program = getProgramFile(file)
+    const importIdxs = program.body
+        .map((node, i) => ([node, i]))
+        .filter(([node, i]) => j.ImportDeclaration.check(node))
+        .map(([node, i]) => i)
+    const lastIdx = importIdxs.length > 0 ?
+        importIdxs[importIdxs.length - 1] + 1 :
+        0
+    program.body.splice(lastIdx, 0, ...nodes)
+}
+
 export function setImportToFile(j, file, importNode) {
-    file.value.program.body.unshift(importNode)
-}
-export function setTypeAlias(j, file,  {propsAlias, defaultAlias}) {
-    const aliases = defaultAlias ? [propsAlias, defaultAlias] : [propsAlias]; 
-    const program = file.paths()[0].value.program
-    aliases.forEach(node => program.body.unshift(node))
-   
-
-    return;
-   /* const imports = file.find(j.ImportDeclaration).paths()
-
-    if(imports.length) {
-        imports[imports.length - 1].insertAfter(aliases)
-    } else {
-        aliases.forEach(node => program.body.unshift(node)) 
-    } */
-    
+    setAfterLastImport(j, file, importNode)
 }
 
+export function setTypeAlias(j, file,  aliases) {
+    setAfterLastImport(j, file, ...aliases)
+}
 
 export function createProperty(j, name, annotation, isStatic = false) {
     return j.classProperty(j.identifier(name), null, annotation, isStatic)
 }
 
 export function isDefaultProps(j, node) {
-    return j.classProperty.check(prop) && prop.static && prop.key.name === 'defaultProps';
+    return j.ClassProperty.check(node) && node.static && node.key.name === 'defaultProps';
 }
 
+export function setFlowMode(j, file, mode) {
+    getProgramFile(file).comments = [
+        makeFlowComment(j, mode),
+        ...(getProgramFile(file).comments || [])
+    ]
+}
 
 export function setToComponent(j, {component, propsAnnotation, defaultAnnotation}) {
     if (j.ClassDeclaration.check(component.node)) {
         const body = component.node.body.body
-        const defaultProps = defaultAnnotation && body.find(prop => isDefaultProps(j, prop))
-        body.unshift(createProperty(j, 'props', propsAnnotation))
+        const defaultProps = defaultAnnotation && body.find(prop => isDefaultProps(j, prop))        
         if (defaultAnnotation) {
             if (defaultProps) {
                 defaultProps.typeAnnotation = defaultAnnotation
@@ -42,6 +52,7 @@ export function setToComponent(j, {component, propsAnnotation, defaultAnnotation
                 )
             }
         }
+        body.unshift(createProperty(j, 'props', propsAnnotation))
     } else if(j.FunctionDeclaration.check(component.node)) {
         if (component.node.params[0]) {
             component.node.params[0].typeAnnotation = propsAnnotation
@@ -51,4 +62,10 @@ export function setToComponent(j, {component, propsAnnotation, defaultAnnotation
             component.node.init.params[0].typeAnnotation = propsAnnotation
         }
     }
+}
+
+
+export function removePropTypes(j, file) {
+    findStaticByName(j, file, 'propTypes').remove();
+    findDynamicByName(j, file, 'propTypes').remove()
 }

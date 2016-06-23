@@ -30,7 +30,7 @@ export function makeAlias(
             propTypesFlow
         ),
         propTypesName,
-        ...(defaultTypesFlow.lenght ?
+        ...(defaultTypesFlow ?
             {
                 defaultAlias: createTypeAlias(
                     j,
@@ -63,4 +63,9 @@ export default function annotationsToPartOfComponent(
         propsAnnotation: makeTypeAnnotation(j, propTypesName),
         defaultAnnotation: defaultAlias ? makeTypeAnnotation(j, defaultPropsName) : undefined
     }
+}
+
+
+export function makeFlowComment(j, flowmode) {
+    return j.commentBlock(` @${flowmode} `)
 }

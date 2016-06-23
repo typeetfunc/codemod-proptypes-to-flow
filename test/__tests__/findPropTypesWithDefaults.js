@@ -28,6 +28,9 @@ describe('find propTypes with defaultProps', () => {
     import React, { PropTypes as pt } from 'react';
 
     class ComponentName extends React.Component {
+        static defaultProps = {
+            aaa: 'bbbb'
+        }
         static propTypes = {
             aaa: pt.string.isRequired
         };
@@ -35,19 +38,17 @@ describe('find propTypes with defaultProps', () => {
 
         }
     }
-    
-    ComponentName.defaultProps = {
-        aaa: 'bbbb'
-    };
+
 
     var componentFunc = (params) => {};
     componentFunc.propTypes = {bbb: pt.string.isRequired};
     componentFunc.defaultProps = {bbb: 'aaa'};
   `;
-const root = j(code)
+
  
  /* 
   it('mergeByComponent priotity first list', () => {
+    const root = j(code)
     const propTypes = findStaticAndDynamicWithComp(j, root, 'propTypes')
     const emptyDefaultProps = []
     const merged = mergeByComponent(propTypes, emptyDefaultProps)
@@ -56,6 +57,7 @@ const root = j(code)
   })
 
   it('find and mapping annotations', () => {
+    const root = j(code)
     const typeWithDefault = findPropTypesWithDefaults(j, root)
     const withAnnotations = propTypesWithDefaultsToFlow(j, typeWithDefault)
     expect(withAnnotations.length).toBe(2);
@@ -72,19 +74,22 @@ const root = j(code)
   });
 */
   it('its work', () => {
+      const root = j(code)
       //const typeWithDefault = findPropTypesWithDefaults(j, root)
       //const withAnnotations = propTypesWithDefaultsToFlow(j, typeWithDefault)
       //const withAnnotationsInPart = withAnnotations
       //  .map(component => annotationsToPartOfComponent(j, component, withAnnotations.length === 1))
    // console.log(withAnnotationsInPart)
 
-    console.log(transformer({
+    console.log('RESULT',
+        transformer({
             source: code,
-            name: 'UIInput.jsx'
+            path: '/home/alef/projects/tinkoff-portal-web/components/platform/ui/input/UIInput.jsx'
         },
         {jscodeshift},
-        {}
-    ))
+        {export: false}
+    )
+    )
     
   })
 });

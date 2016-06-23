@@ -69,7 +69,6 @@ function mergeByComponent(list1, list2) {
       const finded = list2.find(({component}) => isEqualComp(component, comp));
       return finded ? {...finded, ...rest} : {component: comp, ...rest};
     })
-    .filter(val => val)
 }
 
 export default function findTypesAndDefaults(j, root) {
