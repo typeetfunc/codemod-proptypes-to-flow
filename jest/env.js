@@ -44,6 +44,6 @@ global.test = (testFolderName, options, fakeOptions = {}) => {
       fakeOptions.annotationFilePath && expect(annotationFile.path).toEqual(fakeOptions.annotationFilePath)
   } else {
       expect(result.trim()).toEqual(output)
-      console.log(result)
+      //console.log(result)
   }
 };

@@ -124,10 +124,10 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
   } else if (node.type === 'Identifier') {
     returnValue =  declarators[node.name] ?
         j.identifier(declarators[node.name]) :
-        j.genericTypeAnnotation(node, null);
+        null;
   }
 
-  returnValue = returnValue || j.identifier('$FlowFixMe')
+  returnValue = returnValue || j.genericTypeAnnotation(j.identifier('$FlowFixMe'), null)
 
   // finally return either an objectTypeProperty or just a property if `key` is null
   if (!key) {
