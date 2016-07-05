@@ -27,7 +27,9 @@ export default function annotationsToFile(j, filePath, annotations, flowmode) {
         ...(defaultAlias ? [j.exportNamedDeclaration(defaultAlias)] : [])
     ]), [])
     const program = j.program(body)
-    program.comments = [makeFlowComment(j, flowmode)]
+    if (flowmode) {
+        program.comments = [makeFlowComment(j, flowmode)]
+    }
 
     return {
         programNode: j(program),

@@ -75,21 +75,7 @@ describe('find propTypes with defaultProps', () => {
 */
   it('its work', () => {
       const root = j(code)
-      //const typeWithDefault = findPropTypesWithDefaults(j, root)
-      //const withAnnotations = propTypesWithDefaultsToFlow(j, typeWithDefault)
-      //const withAnnotationsInPart = withAnnotations
-      //  .map(component => annotationsToPartOfComponent(j, component, withAnnotations.length === 1))
-   // console.log(withAnnotationsInPart)
-
-    console.log('RESULT',
-        transformer({
-            source: code,
-            path: '/home/alef/projects/tinkoff-portal-web/components/platform/ui/input/UIInput.jsx'
-        },
-        {jscodeshift},
-        {export: false}
-    )
-    )
+      
     
   })
 });

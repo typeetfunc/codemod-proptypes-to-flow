@@ -40,10 +40,10 @@ global.test = (testFolderName, options, fakeOptions = {}) => {
       const flowFile = read(p.join(testFolderName, 'output.flow.js')).trim()
       expect(mainFile.trim()).toEqual(output)
       expect(annotationFile.source).toEqual(flowFile)
-      console.log(result)
+      //console.log(result)
       fakeOptions.annotationFilePath && expect(annotationFile.path).toEqual(fakeOptions.annotationFilePath)
   } else {
       expect(result.trim()).toEqual(output)
-      //console.log(result)
+      console.log(result)
   }
 };

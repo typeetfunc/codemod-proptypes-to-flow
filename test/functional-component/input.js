@@ -1,7 +1,8 @@
 import React from 'react';
 
-export default class Test extends React.Component {
-  static propTypes = {
+const Comp = props => <div>Hello!</div>;
+
+Comp.propTypes = {
     optionalArray: React.PropTypes.array,
     optionalBool: React.PropTypes.bool,
     optionalFunc: React.PropTypes.func,
@@ -13,27 +14,22 @@ export default class Test extends React.Component {
     optionalMessage: React.PropTypes.instanceOf(Message),
     optionalEnum: React.PropTypes.oneOf(['News', 'Photos']),
     optionalUnion: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number,
-      React.PropTypes.instanceOf(Message)
+        React.PropTypes.string,
+        React.PropTypes.number,
+        React.PropTypes.instanceOf(Message)
     ]),
     optionalArrayOf: React.PropTypes.arrayOf(React.PropTypes.number),
-
     optionalObjectOf: React.PropTypes.objectOf(React.PropTypes.number),
     optionalObjectWithShape: React.PropTypes.shape({
-      color: React.PropTypes.string,
-      fontSize: React.PropTypes.number
+        color: React.PropTypes.string,
+        fontSize: React.PropTypes.number
     }),
     requiredFunc: React.PropTypes.func.isRequired,
     requiredAny: React.PropTypes.any.isRequired,
-  };
+};
 
-  static defaultProps = {
+Comp.defaultProps = {
     optionalArray: [],
     optionalBool: false
-  };
+};
 
-  constructor(props) {
-    super(props);
-  }
-}

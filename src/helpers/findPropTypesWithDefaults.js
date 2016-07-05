@@ -84,4 +84,6 @@ export {
   findStaticAndDynamicWithComp,
   isEqualComp,
   mergeByComponent,
+  findStaticByName,
+  findDynamicByName
 };
