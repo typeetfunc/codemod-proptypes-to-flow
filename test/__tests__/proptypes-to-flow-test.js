@@ -25,7 +25,7 @@ describe('React.PropTypes to flow', () => {
 
   it('transforms optional PropTypes prefixed with `React`', () => {
     test('export-annotation',
-        {annotationToFile: true, setFlowMode: 'flow' },
+        {annotationToFile: true, setFlowMode: 'strict' },
         {
             path: '/home/folder/projects/project/components/UIInput.jsx',
             annotationFilePath: '/home/folder/projects/project/components/UIInput.flow.jsx'

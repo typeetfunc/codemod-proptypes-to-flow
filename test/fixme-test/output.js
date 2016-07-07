@@ -2,8 +2,8 @@ import React, { PropTypes as pt } from 'react';
 import { CommonPropTypes } from './CommonPropTypes';
 
 type Props = {
-    aaa?: $FlowFixMe;
-    bbb?: $FlowFixMe;
+    aaa?: $FlowFixMe,
+    bbb?: $FlowFixMe,
 };
 
 type DefaultProps = {aaa?: $FlowFixMe};

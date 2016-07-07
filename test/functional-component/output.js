@@ -1,33 +1,33 @@
 import React from 'react';
 
 type Props = {
-    optionalArray?: Array<any>;
-    optionalBool?: boolean;
-    optionalFunc?: Function;
-    optionalNumber?: number;
-    optionalObject?: Object;
-    optionalString?: string;
-    optionalNode?: number | string | React.Element | Array<any>;
-    optionalElement?: React.Element;
-    optionalMessage?: Message;
-    optionalEnum?: 'News' | 'Photos';
-    optionalUnion?: string | number | Message;
-    optionalArrayOf?: Array<number>;
-    optionalObjectOf?: Object<number>;
+    optionalArray?: Array<any>,
+    optionalBool?: boolean,
+    optionalFunc?: Function,
+    optionalNumber?: number,
+    optionalObject?: Object,
+    optionalString?: string,
+    optionalNode?: number | string | React.Element | Array<any>,
+    optionalElement?: React.Element,
+    optionalMessage?: Message,
+    optionalEnum?: 'News' | 'Photos',
+    optionalUnion?: string | number | Message,
+    optionalArrayOf?: Array<number>,
+    optionalObjectOf?: Object<number>,
     optionalObjectWithShape?: {
-        color?: string;
-        fontSize?: number;
-    };
-    requiredFunc: Function;
-    requiredAny: any;
+        color?: string,
+        fontSize?: number,
+    },
+    requiredFunc: Function,
+    requiredAny: any,
 };
 
 type DefaultProps = {
-    optionalArray?: Array<any>;
-    optionalBool?: boolean;
+    optionalArray?: Array<any>,
+    optionalBool?: boolean,
 };
 
-const Comp = props: Props => <div>Hello!</div>;
+const Comp = (props: Props) => <div>Hello!</div>;
 
 Comp.propTypes = {
     optionalArray: PropTypes.array,

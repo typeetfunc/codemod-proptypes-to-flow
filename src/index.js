@@ -1,22 +1,34 @@
 import findPropTypesWithDefaults from './helpers/findPropTypesWithDefaults'
 import propTypesWithDefaultsToFlow from './helpers/propTypesWithDefaultsToFlow'
-import { setImportToFile, setTypeAlias, setToComponent, setFlowMode, removePropTypes } from './helpers/setAnnotations'
+import { setImportToFile, setTypeAlias, setToComponent, setFlowMode, removePropTypes, setClassMembers } from './helpers/setAnnotations'
 import annotationsToPartOfComponent from './helpers/annotationsToPartComponent'
 import annotationsToFile from './helpers/annotationsToFile'
+import findClassMembers from './helpers/findClassMembers'
 
 const DEFAULT_OPTIONS = {
     annotationToFile: false,
     generate: {
+        arrowParensAlways: true,
         quote: 'single'
     },
     removePropTypes: false,
 }
 
+const FLOWMODE_MAPPING = {
+    weak: 'flow weak',
+    strict: 'flow',
+    no: 'noflow'
+}
+
 export default function transformer(file, api, options) {
   const j = api.jscodeshift
+  if (options.setFlowMode && !FLOWMODE_MAPPING[options.setFlowMode]) {
+      throw new Error('Bad options: setFlowMode can be weak, strict or no')
+  }
   const config = {
       ...DEFAULT_OPTIONS,
-      ...options
+      ...options,
+      ...(options.setFlowMode ? {setFlowMode: FLOWMODE_MAPPING[options.setFlowMode]} : {})
   }
   const {expression, statement, statements} = j.template
   const root = j(file.source)
@@ -44,7 +56,13 @@ export default function transformer(file, api, options) {
       )
 
   }
-  withAnnotationsInPart.forEach(compWithAnnotation => setToComponent(j, compWithAnnotation))
+  withAnnotationsInPart.forEach(compWithAnnotation => {
+      if (j.ClassDeclaration.check(compWithAnnotation.component)) {
+          const members = findClassMembers(compWithAnnotation.component)
+          setClassMembers(j, compWithAnnotation.component, members)
+      }
+      setToComponent(j, compWithAnnotation)
+  })
   if(config.removePropTypes) {
     removePropTypes(j, root)
   }

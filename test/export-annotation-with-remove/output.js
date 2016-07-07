@@ -1,4 +1,4 @@
-/* @weak */
+/* @flow weak */
 import React, { PropTypes as pt } from 'react';
 
 import type {Props, DefaultProps} from './UIInput.flow.jsx';
