@@ -45,4 +45,8 @@ describe('React.PropTypes to flow', () => {
   it('transforms optional PropTypes prefixed with `React`', () => {
     test('fixme-test');
   });
+  it('transforms class properties', () => {
+    test('class-members-annotate');
+  });
 });
+

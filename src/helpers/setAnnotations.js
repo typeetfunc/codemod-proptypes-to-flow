@@ -64,21 +64,21 @@ export function setToComponent(j, {component, propsAnnotation, defaultAnnotation
     }
 }
 
-function isPropertyWithName(name, node) {
+function isPropertyWithName(j, name, node) {
     return j.ClassProperty.check(node) && !node.static && node.key.name === name
 }
 
 export function setClassMembers(j, classComp, members) {
     const body = classComp.node.body.body
     members.forEach(member => {
-        const alreadyExist = body.find(prop => isPropertyWithName(member, prop))
+        const alreadyExist = body.find(prop => isPropertyWithName(j, member, prop))
         const typeAnnotation = member === 'state' ?
             j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Object'), null)) :
             j.typeAnnotation(j.anyTypeAnnotation())
         if (alreadyExist) {
             alreadyExist.typeAnnotation = typeAnnotation
         } else {
-            body.push(createProperty(j, member, typeAnnotation))
+            body.unshift(createProperty(j, member, typeAnnotation))
         }
     })
 }

@@ -57,8 +57,8 @@ export default function transformer(file, api, options) {
   }
   const useIsPretty = Boolean(withAnnotationsInPart.find(compWithAnnotation => j.VariableDeclarator.check(compWithAnnotation.component.node)))
   withAnnotationsInPart.forEach(compWithAnnotation => {
-      if (j.ClassDeclaration.check(compWithAnnotation.component)) {
-          const members = findClassMembers(compWithAnnotation.component)
+      if (j.ClassDeclaration.check(compWithAnnotation.component.node)) {
+          const members = findClassMembers(j, compWithAnnotation.component)
           setClassMembers(j, compWithAnnotation.component, members)
       }
       setToComponent(j, compWithAnnotation)
