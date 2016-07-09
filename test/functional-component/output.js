@@ -30,27 +30,33 @@ type DefaultProps = {
 const Comp = (props: Props) => <div>Hello!</div>;
 
 Comp.propTypes = {
-    optionalArray: PropTypes.array,
-    optionalBool: PropTypes.bool,
-    optionalFunc: PropTypes.func,
-    optionalNumber: PropTypes.number,
-    optionalObject: PropTypes.object,
-    optionalString: PropTypes.string,
-    optionalNode: PropTypes.node,
-    optionalElement: PropTypes.element,
-    optionalMessage: PropTypes.instanceOf(Message),
-    optionalEnum: PropTypes.oneOf(['News', 'Photos']),
-    optionalUnion: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Message)]),
-    optionalArrayOf: PropTypes.arrayOf(PropTypes.number),
-    optionalObjectOf: PropTypes.objectOf(PropTypes.number),
+    optionalArray: React.PropTypes.array,
+    optionalBool: React.PropTypes.bool,
+    optionalFunc: React.PropTypes.func,
+    optionalNumber: React.PropTypes.number,
+    optionalObject: React.PropTypes.object,
+    optionalString: React.PropTypes.string,
+    optionalNode: React.PropTypes.node,
+    optionalElement: React.PropTypes.element,
+    optionalMessage: React.PropTypes.instanceOf(Message),
+    optionalEnum: React.PropTypes.oneOf(['News', 'Photos']),
 
-    optionalObjectWithShape: PropTypes.shape({
-        color: PropTypes.string,
-        fontSize: PropTypes.number
+    optionalUnion: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number,
+        React.PropTypes.instanceOf(Message)
+    ]),
+
+    optionalArrayOf: React.PropTypes.arrayOf(React.PropTypes.number),
+    optionalObjectOf: React.PropTypes.objectOf(React.PropTypes.number),
+
+    optionalObjectWithShape: React.PropTypes.shape({
+        color: React.PropTypes.string,
+        fontSize: React.PropTypes.number
     }),
 
-    requiredFunc: PropTypes.func.isRequired,
-    requiredAny: PropTypes.any.isRequired
+    requiredFunc: React.PropTypes.func.isRequired,
+    requiredAny: React.PropTypes.any.isRequired
 };
 
 Comp.defaultProps = {

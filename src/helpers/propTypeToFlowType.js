@@ -78,9 +78,15 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
 
   // Check for React namespace for MemberExpressions (i.e. React.PropTypes.string)
   if (node.object) {
-    node.object = getPropTypeExpression(node.object);
+    node = j.memberExpression(
+        getPropTypeExpression(node.object),
+        node.property
+    )
   } else if (node.callee) {
-    node.callee = getPropTypeExpression(node.callee);
+    node = j.callExpression(
+        getPropTypeExpression(node.callee),
+        node.arguments
+    )
   }
 
 

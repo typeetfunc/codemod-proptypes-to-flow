@@ -1,5 +1,5 @@
 describe('React.PropTypes to flow', () => {
-  it('transforms optional PropTypes prefixed with `React`', () => {
+ /* it('transforms optional PropTypes prefixed with `React`', () => {
     test('simple-class-component');
   });
 
@@ -9,12 +9,12 @@ describe('React.PropTypes to flow', () => {
 
   it('transforms optional PropTypes prefixed with `React`', () => {
     test('class-property-proptypes');
-  });
+  });*/
 
   it('transforms functional component', () => {
     test('functional-component');
   });
-
+/*
   it('transforms functional component', () => {
     test('member-proptypes');
   });
@@ -51,5 +51,8 @@ describe('React.PropTypes to flow', () => {
   it('bugfix', () => {
     test('bug-not-set-flow-mode',  {setFlowMode: 'weak'},);
   });
+  it('bugfix', () => {
+    test('bug-drop-namespace-react-in-proptypes',  {setFlowMode: 'weak'},);
+  });*/
 });
 
