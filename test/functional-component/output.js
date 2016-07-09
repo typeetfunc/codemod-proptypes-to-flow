@@ -40,19 +40,17 @@ Comp.propTypes = {
     optionalElement: PropTypes.element,
     optionalMessage: PropTypes.instanceOf(Message),
     optionalEnum: PropTypes.oneOf(['News', 'Photos']),
-    optionalUnion: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.instanceOf(Message)
-    ]),
+    optionalUnion: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Message)]),
     optionalArrayOf: PropTypes.arrayOf(PropTypes.number),
     optionalObjectOf: PropTypes.objectOf(PropTypes.number),
+
     optionalObjectWithShape: PropTypes.shape({
         color: PropTypes.string,
         fontSize: PropTypes.number
     }),
+
     requiredFunc: PropTypes.func.isRequired,
-    requiredAny: PropTypes.any.isRequired,
+    requiredAny: PropTypes.any.isRequired
 };
 
 Comp.defaultProps = {

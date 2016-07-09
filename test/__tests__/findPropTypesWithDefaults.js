@@ -1,81 +1,40 @@
 jest.autoMockOff();
-
+var diff = require('deep-diff')
+/*
+const getParser = require('../../node_modules/jscodeshift/dist/getParser')
 const jscodeshift = require('jscodeshift');
-const {
-    default: findPropTypesWithDefaults,
-    classDeclarationFromProp,
-    findAnyByName,
-    findStaticAndDynamicWithComp,
-    isEqualComp,
-    mergeByComponent
-} = require('../../src/helpers/findPropTypesWithDefaults')
 const j = jscodeshift
-const {
-    default: propTypesWithDefaultsToFlow,
-    isEqualObjectExprKey
-} = require('../../src/helpers/propTypesWithDefaultsToFlow')
-const {
-    default: annotationsToPartOfComponent,
-    createTypeAlias,
-createProperty,
-isDefaultProps,
-makeAlias
-} = require('../../src/helpers/annotationsToPartComponent')
-const transformer = require('../../src/index')
- 
-describe('find propTypes with defaultProps', () => {
-  const code = `
-    import React, { PropTypes as pt } from 'react';
+const file = j(`props => {}`)
+const reprintend = file.toSource({
+    arrowParensAlways: true
+})
+console.log(reprintend)
+const file2 = j(reprintend)
 
-    class ComponentName extends React.Component {
-        static defaultProps = {
-            aaa: 'bbbb'
-        }
-        static propTypes = {
-            aaa: pt.string.isRequired
-        };
-        render() {
-
-        }
-    }
-
-
-    var componentFunc = (params) => {};
-    componentFunc.propTypes = {bbb: pt.string.isRequired};
-    componentFunc.defaultProps = {bbb: 'aaa'};
-  `;
-
- 
- /* 
-  it('mergeByComponent priotity first list', () => {
-    const root = j(code)
-    const propTypes = findStaticAndDynamicWithComp(j, root, 'propTypes')
-    const emptyDefaultProps = []
-    const merged = mergeByComponent(propTypes, emptyDefaultProps)
-
-    expect(merged.length).toBe(2);
-  })
-
-  it('find and mapping annotations', () => {
-    const root = j(code)
-    const typeWithDefault = findPropTypesWithDefaults(j, root)
-    const withAnnotations = propTypesWithDefaultsToFlow(j, typeWithDefault)
-    expect(withAnnotations.length).toBe(2);
-    expect(j(withAnnotations[0].propTypes).toSource()).toBe(`{
-    aaa: pt.string.isRequired
-}`)
-     expect(j(withAnnotations[0].propTypesFlow).toSource()).toBe(`aaa: string`)
-     expect(j(withAnnotations[0].defaultTypesFlow).toSource()).toBe(`aaa: string`)
-     expect(j(withAnnotations[1].propTypes).toSource()).toBe(`{
-    bbb: pt.string.isRequired
-}`)
-     expect(j(withAnnotations[1].propTypesFlow).toSource()).toBe(`bbb: string`)
-     expect(j(withAnnotations[1].defaultTypesFlow).toSource()).toBe(`bbb: string`)
-  });
+file2.paths()[0].value.program.body[0].expression.params[0].typeAnnotation = j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Props'), null))
+console.log(
+    file2.toSource()
+)
 */
-  it('its work', () => {
-      const root = j(code)
-      
-    
-  })
-});
+const recast = require('recast');
+const b = recast.types.builders;
+const ast = recast.parse(`props => {}`)
+var propsParam = b.identifier('props')
+propsParam.typeAnnotation = b.typeAnnotation(b.genericTypeAnnotation(b.identifier('Props'), null))
+var arrowFunc = b.arrowFunctionExpression(
+        [propsParam],
+        b.blockStatement([])
+)
+
+ast.program.body[0].expression = arrowFunc
+var ast1 = b.file(b.program(
+    [b.expressionStatement(arrowFunc)]
+))
+
+console.log(diff(ast.program, ast1.program))
+console.log(JSON.stringify(ast, null, 2))
+console.log(JSON.stringify(ast1, null, 2))
+
+
+console.log(recast.prettyPrint(ast).code)
+console.log(recast.prettyPrint(ast1).code)

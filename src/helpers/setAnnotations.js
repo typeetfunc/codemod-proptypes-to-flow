@@ -73,7 +73,7 @@ export function setClassMembers(j, classComp, members) {
     members.forEach(member => {
         const alreadyExist = body.find(prop => isPropertyWithName(member, prop))
         const typeAnnotation = member === 'state' ?
-            j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Object'))) :
+            j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Object'), null)) :
             j.typeAnnotation(j.anyTypeAnnotation())
         if (alreadyExist) {
             alreadyExist.typeAnnotation = typeAnnotation

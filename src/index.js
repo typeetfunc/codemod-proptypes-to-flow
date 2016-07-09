@@ -54,8 +54,8 @@ export default function transformer(file, api, options) {
             ...(defaultAlias ? [defaultAlias] : [])
         ]),[])
       )
-
   }
+  const useIsPretty = Boolean(withAnnotationsInPart.find(compWithAnnotation => j.VariableDeclarator.check(compWithAnnotation.component.node)))
   withAnnotationsInPart.forEach(compWithAnnotation => {
       if (j.ClassDeclaration.check(compWithAnnotation.component)) {
           const members = findClassMembers(compWithAnnotation.component)
@@ -70,7 +70,7 @@ export default function transformer(file, api, options) {
     setFlowMode(j, root, config.setFlowMode)
   }
   return exportFile ?
-    [root.toSource(config.generate), {path: exportFile.path, source: exportFile.programNode.toSource(config.generate)}] :
-    root.toSource(config.generate);
+    [root.toSource(config.generate, useIsPretty), {path: exportFile.path, source: exportFile.programNode.toSource(config.generate)}] :
+    root.toSource(config.generate, useIsPretty);
 }
 
