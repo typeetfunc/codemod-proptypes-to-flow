@@ -1,3 +1,5 @@
+import {uniqBy} from 'ramda'
+
 function classDeclarationFromProp(path) {
     return path.parentPath.parentPath.parentPath;
 }
@@ -71,9 +73,11 @@ function mergeByComponent(list1, list2) {
     })
 }
 
+const uniqByComponent = uniqBy(({component}) => component)
+
 export default function findTypesAndDefaults(j, root) {
-  const propTypes = findStaticAndDynamicWithComp(j, root, 'propTypes')
-  const defaultProps = findStaticAndDynamicWithComp(j, root, 'defaultProps')
+  const propTypes = uniqByComponent(findStaticAndDynamicWithComp(j, root, 'propTypes'))
+  const defaultProps = uniqByComponent(findStaticAndDynamicWithComp(j, root, 'defaultProps'))
   return mergeByComponent(propTypes, defaultProps);
 }
 

@@ -1,5 +1,5 @@
 describe('React.PropTypes to flow', () => {
- /* it('transforms optional PropTypes prefixed with `React`', () => {
+  it('transforms optional PropTypes prefixed with `React`', () => {
     test('simple-class-component');
   });
 
@@ -9,12 +9,11 @@ describe('React.PropTypes to flow', () => {
 
   it('transforms optional PropTypes prefixed with `React`', () => {
     test('class-property-proptypes');
-  });*/
-
+  });
   it('transforms functional component', () => {
     test('functional-component');
   });
-/*
+
   it('transforms functional component', () => {
     test('member-proptypes');
   });
@@ -32,7 +31,7 @@ describe('React.PropTypes to flow', () => {
         }
     );
   });
-    it('transforms optional PropTypes prefixed with `React`', () => {
+  it('transforms optional PropTypes prefixed with `React`', () => {
     test('export-annotation-with-remove',
         {annotationToFile: true, removePropTypes: true, setFlowMode: 'weak'},
         {
@@ -41,7 +40,6 @@ describe('React.PropTypes to flow', () => {
         }
     );
   });
-
   it('transforms optional PropTypes prefixed with `React`', () => {
     test('fixme-test');
   });
@@ -51,8 +49,12 @@ describe('React.PropTypes to flow', () => {
   it('bugfix', () => {
     test('bug-not-set-flow-mode',  {setFlowMode: 'weak'},);
   });
-  it('bugfix', () => {
+  it('bugfix not drop namespace from proptypes', () => {
     test('bug-drop-namespace-react-in-proptypes',  {setFlowMode: 'weak'},);
-  });*/
+  });
+
+  it('Double prop types declare', () => {
+    test('bug-double-prop-types-declare');
+  });
 });
 
