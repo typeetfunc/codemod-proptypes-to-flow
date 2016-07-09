@@ -11,9 +11,9 @@ type Props = {
   optionalString?: string,
   // Anything that can be rendered: numbers, strings, elements or an array
   // (or fragment) containing these types.
-  optionalNode?: number | string | React.Element | Array<any>,
+  optionalNode?: number | string | React.Element<any> | Array<number | string | React.Element<any>>,
   // A React element.
-  optionalElement?: React.Element,
+  optionalElement?: React.Element<any>,
   // You can also declare that a prop is an instance of a class. This uses
   // JS's instanceof operator.
   optionalMessage?: Message,

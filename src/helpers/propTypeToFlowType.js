@@ -41,7 +41,12 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
     }
     return inputNode;
   };
-
+  const reactElement = j.genericTypeAnnotation(
+    j.qualifiedTypeIdentifier(j.identifier('React'), j.identifier('Element')),
+    j.typeParameterInstantiation([
+        j.anyTypeAnnotation()
+    ])
+  )
   const TRANSFORM_MAP = {
     any: j.anyTypeAnnotation(),
     bool: j.booleanTypeAnnotation(),
@@ -55,20 +60,20 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
         [j.anyTypeAnnotation()]
       )
     ),
-    element: j.genericTypeAnnotation(
-      j.qualifiedTypeIdentifier(j.identifier('React'), j.identifier('Element')),
-      null
-    ),
+    element: reactElement,
     node: j.unionTypeAnnotation([
       j.numberTypeAnnotation(),
       j.stringTypeAnnotation(),
-      j.genericTypeAnnotation(
-        j.qualifiedTypeIdentifier(j.identifier('React'), j.identifier('Element')),
-        null
-      ),
+      reactElement,
       j.genericTypeAnnotation(
         j.identifier('Array'), j.typeParameterInstantiation(
-          [j.anyTypeAnnotation()]
+          [
+            j.unionTypeAnnotation([
+              j.numberTypeAnnotation(),
+              j.stringTypeAnnotation(),
+              reactElement
+            ])
+          ]
         )
       ),
     ]),

@@ -5,7 +5,7 @@ type Props = {
     clientRouting?: boolean,
     className?: string,
     onClick?: Function,
-    children?: number | string | React.Element | Array<any>,
+    children?: number | string | React.Element<any> | Array<number | string | React.Element<any>>,
     target?: string,
 };
 
