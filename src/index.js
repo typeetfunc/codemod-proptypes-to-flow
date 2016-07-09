@@ -66,11 +66,19 @@ export default function transformer(file, api, options) {
   if(config.removePropTypes) {
     removePropTypes(j, root)
   }
+  let resultSource
   if (config.setFlowMode) {
-    setFlowMode(j, root, config.setFlowMode)
+    let rootWithComment = root
+    if (useIsPretty) {
+        rootWithComment = j(root.toSource(config.generate, useIsPretty))
+    }
+    setFlowMode(j, rootWithComment, config.setFlowMode)
+    resultSource = rootWithComment.toSource(config.generate)
+  } else {
+    resultSource = root.toSource(config.generate, useIsPretty)
   }
   return exportFile ?
-    [root.toSource(config.generate, useIsPretty), {path: exportFile.path, source: exportFile.programNode.toSource(config.generate)}] :
-    root.toSource(config.generate, useIsPretty);
+    [resultSource, {path: exportFile.path, source: exportFile.programNode.toSource(config.generate)}] :
+    resultSource;
 }
 

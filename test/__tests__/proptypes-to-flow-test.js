@@ -48,5 +48,8 @@ describe('React.PropTypes to flow', () => {
   it('transforms class properties', () => {
     test('class-members-annotate');
   });
+  it('bugfix', () => {
+    test('bug-not-set-flow-mode',  {setFlowMode: 'weak'},);
+  });
 });
 
