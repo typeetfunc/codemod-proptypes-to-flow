@@ -1,5 +1,6 @@
 import {findStaticByName, findDynamicByName} from './findPropTypesWithDefaults'
 import {makeFlowComment} from './annotationsToPartComponent'
+
 function getProgramFile(file) {
     return file.paths()[0].value.program
 }
@@ -70,16 +71,8 @@ function isPropertyWithName(j, name, node) {
 
 export function setClassMembers(j, classComp, members) {
     const body = classComp.node.body.body
-    members.forEach(member => {
-        const alreadyExist = body.find(prop => isPropertyWithName(j, member, prop))
-        const typeAnnotation = member === 'state' ?
-            j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Object'), null)) :
-            j.typeAnnotation(j.anyTypeAnnotation())
-        if (alreadyExist) {
-            alreadyExist.typeAnnotation = typeAnnotation
-        } else {
-            body.unshift(createProperty(j, member, typeAnnotation))
-        }
+    members.forEach(({name, annotation}) => {
+        body.unshift(createProperty(j, name, annotation))
     })
 }
 

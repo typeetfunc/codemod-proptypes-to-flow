@@ -5,8 +5,8 @@ type DefaultProps = {aaa: string};
 
 class ComponentName extends React.Component {
     props: Props;
-    state: Object;
-    somethingProp: any;
+    anything: Function;
+    somethingProp: $FlowFixMe;
     static defaultProps: DefaultProps = {
         aaa: 'bbbb'
     };

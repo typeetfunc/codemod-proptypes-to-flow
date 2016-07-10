@@ -1,0 +1,1 @@
+export default j => j.genericTypeAnnotation(j.identifier('$FlowFixMe'), null)

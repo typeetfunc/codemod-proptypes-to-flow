@@ -1,4 +1,5 @@
-import {uniq, compose, concat, contains, append} from 'ramda'
+import {uniq, compose, concat, contains, append, uniqBy, prop} from 'ramda'
+import flowFixMeType from './fixMeType'
 
 const MATCH_THIS = {
     computed: false,
@@ -6,29 +7,25 @@ const MATCH_THIS = {
         type: 'ThisExpression'
     }
 }
-const makeBlacklist = compose(uniq, append('props'), concat)
+const makeBlacklist = compose(uniq, concat(['props', 'state', 'context']))
 const notInBlacklist = list => val => !contains(val, list)
+const uniqByName = uniqBy(prop('name'))
 
 export default (j, classComp) => {
-    const classCollection = j(classComp)
+    const declared = classComp.node.body.body.map(propOrMethod => propOrMethod.key.name)
+    const blacklist = makeBlacklist(declared)
+    const checker = notInBlacklist(blacklist)
 
-    const methods = classCollection
-        .find(j.MethodDefinition)
-        .paths()
-        .map(expr => expr.value.key.name)
-    const calls = classCollection
-        .find(j.CallExpression, {
-            callee: MATCH_THIS
-        })
-        .paths()
-        .map(expr => expr.value.callee.property.name)
-    const blacklist = makeBlacklist(methods, calls)
-
-    return uniq(
+    return uniqByName(
         j(classComp)
         .find(j.MemberExpression, MATCH_THIS)
         .paths()
-        .map(expr => expr.value.property.name)
-        .filter(notInBlacklist(blacklist))
+        .filter(expr => checker(expr.value.property.name))
+        .map(expr => ({
+            name: expr.value.property.name,
+            annotation: j.CallExpression.check(expr.parent.node) ?
+                j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Function'), null)) :
+                j.typeAnnotation(flowFixMeType(j))
+        }))
     )
 }

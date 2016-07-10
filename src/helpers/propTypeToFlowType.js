@@ -1,6 +1,5 @@
-/**
- * Handles transforming a React.PropType to an equivalent flowtype
- */
+import flowFixMeType from './fixMeType'
+
 export default function propTypeToFlowType(j, key, value, declarators = {}) {
   /**
    * Returns an expression without `isRequired`
@@ -138,7 +137,7 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
         null;
   }
 
-  returnValue = returnValue || j.genericTypeAnnotation(j.identifier('$FlowFixMe'), null)
+  returnValue = returnValue || flowFixMeType(j)
 
   // finally return either an objectTypeProperty or just a property if `key` is null
   if (!key) {
