@@ -7,7 +7,7 @@ const MATCH_THIS = {
         type: 'ThisExpression'
     }
 }
-const makeBlacklist = compose(uniq, concat(['props', 'state', 'context']))
+const makeBlacklist = compose(uniq, concat(['props', 'context']))
 const notInBlacklist = list => val => !contains(val, list)
 const uniqByName = uniqBy(prop('name'))
 
