@@ -1,12 +1,5 @@
 /* @flow weak */
 import React from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
-import mixin from '../../../../utils/decorators/mixinComponent';
-import WatchStoresMixin from '../../../mixins/WatchStoresMixin';
-
-
-import './ui-flag.less';
 
 type Props = {
     threeCharCountry?: string,
@@ -18,10 +11,7 @@ type DefaultProps = {
     twoCharCountry?: string,
 };
 
-@mixin(WatchStoresMixin(
-    'countries'
-))
-class UIFlag extends React.Component {
+class UIComp extends React.Component {
     props: Props;
     static defaultProps: DefaultProps;
 
@@ -30,26 +20,20 @@ class UIFlag extends React.Component {
     };
 
     render() {
-        return <div className={classNames({
-            'ui-flag': true,
-            [`ui-flag_${threeCharCountry.toLowerCase()}`]: true,
-            [`ui-flag_size_${this.props.size}`]: this.props.size,
-            'ui-flag_borderless': this.props.noBorder,
-            [this.props.className]: this.props.className
-        })}></div>;
+        return <div></div>;
     }
 }
 
-UIFlag.propTypes = {
+UIComp.propTypes = {
     threeCharCountry: React.PropTypes.string,
     twoCharCountry: React.PropTypes.string
 };
 
-UIFlag.defaultProps = {
+UIComp.defaultProps = {
     threeCharCountry: '',
     twoCharCountry: '',
     size: '',
     noBorder: false
 };
 
-export default UIFlag;
+export default UIComp;

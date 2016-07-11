@@ -1,9 +1,8 @@
 /* @flow weak */
 import React, {Component, PropTypes as pt} from 'react';
-import url from 'url';
 import {pathOr} from 'ramda';
 
-type ApplicationProps = {
+type TestAppProps = {
     cspToken?: string,
     context: Object,
     dehydrate: Function,
@@ -15,20 +14,15 @@ type InitialStateProps = {
     cspToken?: string,
 };
 
-const InitialState = (props: InitialStateProps) => <script
-          dangerouslySetInnerHTML={{
-              __html: 'var initialState=' + JSON.stringify(props.dehydrate())
-          }}
-          nonce={props.cspToken}></script>,
-      metaPath = (content) => (key) => pathOr('', ['meta', 'fields', key, 'value'])(content);
+const InitialState = (props: InitialStateProps) => <script></script>, meta = (content) => (key) => pathOr('', ['fields'])(content);
 
 InitialState.propTypes = {
     dehydrate: pt.func.isRequired,
     cspToken: pt.string
 };
 
-export default class Application extends Component {
-    props: ApplicationProps;
+export default class TestApp extends Component {
+    props: TestAppProps;
 
     static propTypes = {
         cspToken: pt.string,
