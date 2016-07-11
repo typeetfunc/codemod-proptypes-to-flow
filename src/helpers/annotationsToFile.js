@@ -1,5 +1,7 @@
 import * as path from 'path'
-import {makeFlowComment} from './annotationsToPartComponent'
+import {
+    makeFlowComment
+} from './annotationsToPartComponent'
 
 export default function annotationsToFile(j, filePath, annotations, flowmode) {
     const dir = path.dirname(filePath)
@@ -9,19 +11,24 @@ export default function annotationsToFile(j, filePath, annotations, flowmode) {
         base: importFileName
     })
     const importNode = j.importDeclaration(
-        annotations.reduce((acc, {defaultPropsName, propTypesName}) => ([
+        annotations.reduce((acc, {
+            defaultPropsName,
+            propTypesName
+        }) => ([
             ...acc,
             j.importSpecifier(j.identifier(propTypesName)),
-            ...(defaultPropsName ?
-                [j.importSpecifier(j.identifier(defaultPropsName))] :
-                []
-            )
-        ]),
-        []),
-        j.literal(path.format({dir: '.', base: importFileName}))
+            ...(defaultPropsName ? [j.importSpecifier(j.identifier(defaultPropsName))] : [])
+        ]), []),
+        j.literal(path.format({
+            dir: '.',
+            base: importFileName
+        }))
     )
     importNode.importKind = 'type'
-    const body = annotations.reduce((acc, {propsAlias, defaultAlias}) => ([
+    const body = annotations.reduce((acc, {
+        propsAlias,
+        defaultAlias
+    }) => ([
         ...acc,
         j.exportNamedDeclaration(propsAlias),
         ...(defaultAlias ? [j.exportNamedDeclaration(defaultAlias)] : [])

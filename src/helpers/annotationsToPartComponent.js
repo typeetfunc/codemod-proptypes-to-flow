@@ -7,17 +7,20 @@ export function makeTypeAnnotation(j, name) {
     )
 }
 export function createTypeAlias(j, name, flowTypes) {
-  return j.typeAlias(
-    j.identifier(name), null, j.objectTypeAnnotation(flowTypes)
-  )
+    return j.typeAlias(
+        j.identifier(name), null, j.objectTypeAnnotation(flowTypes)
+    )
 }
 
 
 
 export function makeAlias(
-        j,
-        {component, propTypesFlow, defaultTypesFlow},
-        isOneComponentInFile = true
+    j, {
+        component,
+        propTypesFlow,
+        defaultTypesFlow
+    },
+    isOneComponentInFile = true
 ) {
     const componentName = component.value.id.name
     const propTypesName = isOneComponentInFile ? 'Props' : componentName + 'Props'
@@ -30,27 +33,36 @@ export function makeAlias(
             propTypesFlow
         ),
         propTypesName,
-        ...(defaultTypesFlow ?
-            {
-                defaultAlias: createTypeAlias(
-                    j,
-                    defaultPropsName,
-                    defaultTypesFlow
-                ),
-                defaultPropsName
-            } :
-            {})
+        ...(defaultTypesFlow ? {
+            defaultAlias: createTypeAlias(
+                j,
+                defaultPropsName,
+                defaultTypesFlow
+            ),
+            defaultPropsName
+        } : {})
     }
 }
 
 export default function annotationsToPartOfComponent(
-        j,
-        {component, propTypesFlow, defaultTypesFlow},
-        isOneComponentInFile = true
-    ) {
-    const { propsAlias, defaultAlias, defaultPropsName, propTypesName } = makeAlias(
-        j,
-        {component, propTypesFlow, defaultTypesFlow},
+    j, {
+        component,
+        propTypesFlow,
+        defaultTypesFlow
+    },
+    isOneComponentInFile = true
+) {
+    const {
+        propsAlias,
+        defaultAlias,
+        defaultPropsName,
+        propTypesName
+    } = makeAlias(
+        j, {
+            component,
+            propTypesFlow,
+            defaultTypesFlow
+        },
         isOneComponentInFile
     )
 

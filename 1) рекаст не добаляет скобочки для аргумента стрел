@@ -1,5 +1,0 @@
-1) рекаст не добаляет скобочки для аргумента стрелочных функций
-2) искать в классах проперти и обьявлять их насильно
-3)добавлять импорт реакта во все файлы с флоу
-
-./jscodeshift/bin/jscodeshift.sh -t ./codemod-proptypes-to-flow/lib/index.js --extensions=js,jsx --ignore-config=./tinkoff-flow/.jscodeshiftignore ./tinkoff-flow/ --annotationToFile=true --setFlowMode=weak

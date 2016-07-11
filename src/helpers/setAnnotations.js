@@ -1,5 +1,10 @@
-import {findStaticByName, findDynamicByName} from './findPropTypesWithDefaults'
-import {makeFlowComment} from './annotationsToPartComponent'
+import {
+    findStaticByName,
+    findDynamicByName
+} from './findPropTypesWithDefaults'
+import {
+    makeFlowComment
+} from './annotationsToPartComponent'
 
 function getProgramFile(file) {
     return file.paths()[0].value.program
@@ -21,7 +26,7 @@ export function setImportToFile(j, file, importNode) {
     setAfterLastImport(j, file, importNode)
 }
 
-export function setTypeAlias(j, file,  aliases) {
+export function setTypeAlias(j, file, aliases) {
     setAfterLastImport(j, file, ...aliases)
 }
 
@@ -40,10 +45,14 @@ export function setFlowMode(j, file, mode) {
     ]
 }
 
-export function setToComponent(j, {component, propsAnnotation, defaultAnnotation}) {
+export function setToComponent(j, {
+    component,
+    propsAnnotation,
+    defaultAnnotation
+}) {
     if (j.ClassDeclaration.check(component.node)) {
         const body = component.node.body.body
-        const defaultProps = defaultAnnotation && body.find(prop => isDefaultProps(j, prop))        
+        const defaultProps = defaultAnnotation && body.find(prop => isDefaultProps(j, prop))
         if (defaultAnnotation) {
             if (defaultProps) {
                 defaultProps.typeAnnotation = defaultAnnotation
@@ -54,7 +63,7 @@ export function setToComponent(j, {component, propsAnnotation, defaultAnnotation
             }
         }
         body.unshift(createProperty(j, 'props', propsAnnotation))
-    } else if(j.FunctionDeclaration.check(component.node)) {
+    } else if (j.FunctionDeclaration.check(component.node)) {
         if (component.node.params[0]) {
             component.node.params[0].typeAnnotation = propsAnnotation
         }
@@ -71,7 +80,10 @@ function isPropertyWithName(j, name, node) {
 
 export function setClassMembers(j, classComp, members) {
     const body = classComp.node.body.body
-    members.forEach(({name, annotation}) => {
+    members.forEach(({
+        name,
+        annotation
+    }) => {
         body.unshift(createProperty(j, name, annotation))
     })
 }

@@ -1,4 +1,12 @@
-import {uniq, compose, concat, contains, append, uniqBy, prop} from 'ramda'
+import {
+    uniq,
+    compose,
+    concat,
+    contains,
+    append,
+    uniqBy,
+    prop
+} from 'ramda'
 import flowFixMeType from './fixMeType'
 
 const MATCH_THIS = {
@@ -24,8 +32,7 @@ export default (j, classComp) => {
         .map(expr => ({
             name: expr.value.property.name,
             annotation: j.CallExpression.check(expr.parent.node) ?
-                j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Function'), null)) :
-                j.typeAnnotation(flowFixMeType(j))
+                j.typeAnnotation(j.genericTypeAnnotation(j.identifier('Function'), null)) : j.typeAnnotation(flowFixMeType(j))
         }))
     )
 }
