@@ -1,43 +1,49 @@
 import flowFixMeType from './fixMeType'
 
-export default function propTypeToFlowType(j, key, value, declarators = {}) {
-    const getExpressionWithoutRequired = (inputNode) => {
-        let required = false;
-        let node = inputNode;
+function getExpressionWithoutRequired(inputNode) {
+    let required = false;
+    let node = inputNode;
 
-        if (inputNode.property && inputNode.property.name === 'isRequired') {
-            required = true;
-            node = inputNode.object;
-        }
+    if (inputNode.property && inputNode.property.name === 'isRequired') {
+        required = true;
+        node = inputNode.object;
+    }
 
-        return {
-            required,
-            node,
-        };
-    };
+    return {
+        required,
+        node,
+    }
+}
 
-    const getPropTypeExpression = (inputNode) => {
-        const base = inputNode.callee || inputNode.object;
+function getPropTypeExpression(j, inputNode) {
+    const base = inputNode.callee || inputNode.object;
 
-        if (inputNode.object &&
-            inputNode.object.object &&
-            inputNode.object.object.name === 'React') {
-            return j.memberExpression(
-                inputNode.object.property,
-                inputNode.property
-            );
-        } else if (inputNode.object && inputNode.object.name === 'React') {
-            return inputNode.property;
-        }
-        return inputNode;
-    };
+    if (inputNode.object &&
+        inputNode.object.object &&
+        inputNode.object.object.name === 'React') {
+        return j.memberExpression(
+            inputNode.object.property,
+            inputNode.property
+        )
+    } else if (inputNode.object && inputNode.object.name === 'React') {
+        return inputNode.property;
+    }
+    return inputNode;
+}
+
+function makeTransformMap(j) {
     const reactElement = j.genericTypeAnnotation(
         j.qualifiedTypeIdentifier(j.identifier('React'), j.identifier('Element')),
         j.typeParameterInstantiation([
             j.anyTypeAnnotation()
         ])
     )
-    const TRANSFORM_MAP = {
+    const numberOrStringOrElement = [
+        j.numberTypeAnnotation(),
+        j.stringTypeAnnotation(),
+        reactElement
+    ]
+    return {
         any: j.anyTypeAnnotation(),
         bool: j.booleanTypeAnnotation(),
         func: j.genericTypeAnnotation(j.identifier('Function'), null),
@@ -52,23 +58,66 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
         ),
         element: reactElement,
         node: j.unionTypeAnnotation([
-            j.numberTypeAnnotation(),
-            j.stringTypeAnnotation(),
-            reactElement,
+            ...numberOrStringOrElement,
             j.genericTypeAnnotation(
                 j.identifier('Array'), j.typeParameterInstantiation(
                     [
-                        j.unionTypeAnnotation([
-                            j.numberTypeAnnotation(),
-                            j.stringTypeAnnotation(),
-                            reactElement
-                        ])
+                        j.unionTypeAnnotation(numberOrStringOrElement)
                     ]
                 )
             ),
         ]),
-    };
-    let returnValue;
+    }
+}
+
+function makeTransFormMapForTypeOf(j) {
+    const oneOfFunc = (node, declarators) => j.unionTypeAnnotation(
+        node.arguments[0].elements.map(arg => propTypeToFlowType(j, null, arg, declarators))
+    )
+
+    return {
+        instanceOf: node => j.genericTypeAnnotation(node.arguments[0], null),
+        arrayOf: (node, declarators) => j.genericTypeAnnotation(
+            j.identifier('Array'), j.typeParameterInstantiation(
+                [propTypeToFlowType(j, null, node.arguments[0] || j.anyTypeAnnotation(), declarators)]
+            )
+        ),
+        objectOf: (node, declarators) => j.genericTypeAnnotation(
+            j.identifier('Object'), j.typeParameterInstantiation(
+                [propTypeToFlowType(j, null, node.arguments[0] || j.anyTypeAnnotation(), declarators)]
+            )
+        ),
+        shape: (node, declarators) => j.objectTypeAnnotation(
+            node.arguments[0].properties.map(arg => propTypeToFlowType(j, arg.key, arg.value, declarators))
+        ),
+        oneOfType: oneOfFunc,
+        oneOf: oneOfFunc
+    }
+}
+
+const TYPE_CONVERTERS = {
+    Literal: (j, node) => j.stringLiteralTypeAnnotation(node.value, node.raw),
+    MemberExpression: (j, node, declarators) => {
+        const transformMap = makeTransformMap(j)
+
+        return declarators[node.property.name] ?
+            j.identifier(declarators[node.property.name]) :
+            transformMap[node.property.name]
+    },
+    CallExpression: (j, node, declarators) => {
+        const name = node.callee.property.name;
+        const transformMap = makeTransFormMapForTypeOf(j)
+
+        return transformMap[name] ? transformMap[name](node, declarators) : null
+    },
+    ObjectExpression: (j, node, declarators) => j.objectTypeAnnotation(
+        node.arguments.map(arg => propTypeToFlowType(j, arg.key, arg.value, declarators))
+    ),
+    Identifier: (j, node, declarators) => declarators[node.name] ?
+        j.identifier(declarators[node.name]) : null
+}
+
+export default function propTypeToFlowType(j, key, value, declarators = {}) {
     let {
         required,
         node
@@ -77,63 +126,18 @@ export default function propTypeToFlowType(j, key, value, declarators = {}) {
     // Check for React namespace for MemberExpressions (i.e. React.PropTypes.string)
     if (node.object) {
         node = j.memberExpression(
-            getPropTypeExpression(node.object),
+            getPropTypeExpression(j, node.object),
             node.property
         )
     } else if (node.callee) {
         node = j.callExpression(
-            getPropTypeExpression(node.callee),
+            getPropTypeExpression(j, node.callee),
             node.arguments
         )
     }
 
+    const returnValue = TYPE_CONVERTERS[node.type] && TYPE_CONVERTERS[node.type](j, node, declarators) || flowFixMeType(j)
 
-    if (node.type === 'Literal') {
-        returnValue = j.stringLiteralTypeAnnotation(node.value, node.raw);
-    } else if (node.type === 'MemberExpression') {
-        returnValue = declarators[node.property.name] ?
-            j.identifier(declarators[node.property.name]) :
-            TRANSFORM_MAP[node.property.name];
-    } else if (node.type === 'CallExpression') {
-        // instanceOf(), arrayOf(), etc..
-        const name = node.callee.property.name;
-        if (name === 'instanceOf') {
-            returnValue = j.genericTypeAnnotation(node.arguments[0], null);
-        } else if (name === 'arrayOf') {
-            returnValue = j.genericTypeAnnotation(
-                j.identifier('Array'), j.typeParameterInstantiation(
-                    [propTypeToFlowType(j, null, node.arguments[0] || j.anyTypeAnnotation(), declarators)]
-                )
-            );
-        } else if (name === 'objectOf') {
-            // TODO: Is there a direct Flow translation for this?
-            returnValue = j.genericTypeAnnotation(
-                j.identifier('Object'), j.typeParameterInstantiation(
-                    [propTypeToFlowType(j, null, node.arguments[0] || j.anyTypeAnnotation(), declarators)]
-                )
-            );
-        } else if (name === 'shape') {
-            returnValue = j.objectTypeAnnotation(
-                node.arguments[0].properties.map(arg => propTypeToFlowType(j, arg.key, arg.value, declarators))
-            );
-        } else if (name === 'oneOfType' || name === 'oneOf') {
-            returnValue = j.unionTypeAnnotation(
-                node.arguments[0].elements.map(arg => propTypeToFlowType(j, null, arg, declarators))
-            );
-        }
-    } else if (node.type === 'ObjectExpression') {
-        returnValue = j.objectTypeAnnotation(
-            node.arguments.map(arg => propTypeToFlowType(j, arg.key, arg.value, declarators))
-        );
-    } else if (node.type === 'Identifier') {
-        returnValue = declarators[node.name] ?
-            j.identifier(declarators[node.name]) :
-            null;
-    }
-
-    returnValue = returnValue || flowFixMeType(j)
-
-    // finally return either an objectTypeProperty or just a property if `key` is null
     if (!key) {
         return returnValue;
     } else {
